@@ -1,13 +1,11 @@
 package com.immo.immo_ma.service.impl;
 
 import com.flipkart.hbaseobjectmapper.Records;
-import com.immo.immo_ma.bean.Annonce;
-import com.immo.immo_ma.bean.AnnonceType;
+import com.immo.immo_ma.bean.*;
 import com.immo.immo_ma.dao.AnnonceDao;
-import com.immo.immo_ma.service.AnnonceService;
-import com.immo.immo_ma.service.AnnonceTypeService;
+import com.immo.immo_ma.service.*;
+import lombok.AllArgsConstructor;
 import org.apache.hadoop.hbase.client.Scan;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -15,26 +13,58 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@AllArgsConstructor
 public class AnnonceServiceImpl implements AnnonceService {
 
-    @Autowired
     private AnnonceDao annonceDao;
-    @Autowired
     private AnnonceTypeService annonceTypeService;
+    private SecteurService secteurService;
+    private AnnonceurService annonceurService;
+    private CategoryService categoryService;
 
     @Override
     public Annonce save(Annonce annonce) throws IOException {
-        String annonceTypeId = annonce.getAnnonceType().getId();
-        if (annonceTypeId == null || annonceTypeId.isEmpty()) {
-            return null;
+
+        AnnonceType annonceType = annonce.getAnnonceType();
+        if (annonceType != null) {
+            annonceType = annonceTypeService.findById(annonceType.getId());
+            if (annonceType != null) {
+                annonce.setAnnonceType(annonceType);
+            }else{
+                annonce.setAnnonceType(null);
+            }
         }
 
-        AnnonceType annonceType = annonceTypeService.findById(annonceTypeId);
-        if (annonceType == null) {
-            return null;
+        Secteur secteur = annonce.getSecteur();
+        if (secteur != null) {
+            secteur = secteurService.findById(secteur.getId());
+            if (secteur != null) {
+                annonce.setSecteur(secteur);
+            }else{
+                annonce.setSecteur(null);
+            }
         }
 
-        annonce.setAnnonceType(annonceType);
+        Annonceur annonceur = annonce.getAnnonceur();
+        if (annonceur != null) {
+            annonceur = annonceurService.findById(annonceur.getId());
+            if (annonceur != null) {
+                annonce.setAnnonceur(annonceur);
+            }else{
+                annonce.setAnnonceur(null);
+            }
+        }
+
+        Category category = annonce.getCategory();
+        if (category != null) {
+            category = categoryService.findById(category.getId());
+            if (category != null) {
+                annonce.setCategory(category);
+            }else{
+                annonce.setCategory(null);
+            }
+        }
+
         String id = annonceDao.persist(annonce);
         if (id != null) {
             return findById(id);
@@ -64,4 +94,7 @@ public class AnnonceServiceImpl implements AnnonceService {
     public void delete(String id) throws IOException {
         annonceDao.delete(id);
     }
+
+
+
 }

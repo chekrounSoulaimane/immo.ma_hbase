@@ -10,7 +10,7 @@ import java.util.Collections;
 import java.util.List;
 
 @RestController
-@RequestMapping("/anonceur-type")
+@RequestMapping("/anonceur")
 public class AnonceurRest {
 
     @Autowired
