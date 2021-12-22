@@ -1,7 +1,7 @@
 package com.immo.immo_ma;
 
 import com.flipkart.hbaseobjectmapper.HBAdmin;
-import com.immo.immo_ma.bean.Annonce;
+import com.immo.immo_ma.bean.*;
 import org.apache.hadoop.hbase.HBaseConfiguration;
 import org.apache.hadoop.hbase.TableName;
 import org.apache.hadoop.hbase.client.Admin;
@@ -34,6 +34,26 @@ public class ImmoApplication implements CommandLineRunner {
         HBAdmin hbAdmin = HBAdmin.create(getConnection());
         if (!tableExists(Annonce.class)) {
             hbAdmin.createTable(Annonce.class);
+        }
+
+        if (!tableExists(AnnonceType.class)) {
+            hbAdmin.createTable(AnnonceType.class);
+        }
+
+        if (!tableExists(Annonceur.class)) {
+            hbAdmin.createTable(Annonceur.class);
+        }
+
+        if (!tableExists(Category.class)) {
+            hbAdmin.createTable(Category.class);
+        }
+
+        if (!tableExists(City.class)) {
+            hbAdmin.createTable(City.class);
+        }
+
+        if (!tableExists(Secteur.class)) {
+            hbAdmin.createTable(Secteur.class);
         }
     }
 

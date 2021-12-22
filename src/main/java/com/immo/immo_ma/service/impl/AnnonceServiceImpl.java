@@ -2,8 +2,10 @@ package com.immo.immo_ma.service.impl;
 
 import com.flipkart.hbaseobjectmapper.Records;
 import com.immo.immo_ma.bean.Annonce;
+import com.immo.immo_ma.bean.AnnonceType;
 import com.immo.immo_ma.dao.AnnonceDao;
 import com.immo.immo_ma.service.AnnonceService;
+import com.immo.immo_ma.service.AnnonceTypeService;
 import org.apache.hadoop.hbase.client.Scan;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,9 +19,22 @@ public class AnnonceServiceImpl implements AnnonceService {
 
     @Autowired
     private AnnonceDao annonceDao;
+    @Autowired
+    private AnnonceTypeService annonceTypeService;
 
     @Override
     public Annonce save(Annonce annonce) throws IOException {
+        String annonceTypeId = annonce.getAnnonceType().getId();
+        if (annonceTypeId == null || annonceTypeId.isEmpty()) {
+            return null;
+        }
+
+        AnnonceType annonceType = annonceTypeService.findById(annonceTypeId);
+        if (annonceType == null) {
+            return null;
+        }
+
+        annonce.setAnnonceType(annonceType);
         String id = annonceDao.persist(annonce);
         if (id != null) {
             return findById(id);
